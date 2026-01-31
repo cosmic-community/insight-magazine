@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -27,6 +27,10 @@ export default function ThemeProvider({
   const [theme, setTheme] = useState<Theme>('light');
   const [mounted, setMounted] = useState(false);
 
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  }, []);
+
   useEffect(() => {
     setMounted(true);
     // Check for saved theme preference or system preference
@@ -52,9 +56,19 @@ export default function ThemeProvider({
     }
   }, [theme, mounted]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
+  // Changed: Add keyboard shortcut listener for Cmd+/ (Mac) or Ctrl+/ (Windows/Linux)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Cmd+/ (Mac) or Ctrl+/ (Windows/Linux)
+      if ((event.metaKey || event.ctrlKey) && event.key === '/') {
+        event.preventDefault();
+        toggleTheme();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [toggleTheme]);
 
   // Prevent flash of wrong theme
   if (!mounted) {
