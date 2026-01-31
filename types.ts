@@ -65,6 +65,17 @@ export interface AboutPage extends CosmicObject {
   };
 }
 
+// Changed: Added PoweredBy interface for the Powered By section
+export interface PoweredBy extends CosmicObject {
+  type: 'powered-by';
+  metadata: {
+    name: string;
+    description?: string;
+    logo?: FeaturedImage;
+    website_url?: string;
+  };
+}
+
 // Simple error helper for Cosmic SDK
 export function hasStatus(error: unknown): error is { status: number } {
   return typeof error === 'object' && error !== null && 'status' in error;

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getAboutPage, getAllAuthors } from '@/lib/cosmic';
+import { getAboutPage, getAllAuthors, getPoweredByItems } from '@/lib/cosmic';
 import Link from 'next/link';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://insightmagazine.com';
@@ -24,9 +24,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [aboutPage, authors] = await Promise.all([
+  const [aboutPage, authors, poweredByItems] = await Promise.all([
     getAboutPage(),
     getAllAuthors(),
+    getPoweredByItems(),
   ]);
 
   // JSON-LD for AboutPage
@@ -132,9 +133,72 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* Changed: Added Powered By Section */}
+      {poweredByItems.length > 0 && (
+        <section className="bg-gray-50 dark:bg-gray-900 py-16">
+          <div className="container-wide">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 text-center">
+              Powered By
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+              We're proud to partner with these amazing technologies and services that power our platform.
+            </p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {poweredByItems.map((item) => {
+                const logo = item.metadata?.logo;
+                const websiteUrl = item.metadata?.website_url;
+                
+                const CardContent = (
+                  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg dark:hover:shadow-gray-900/50 transition-all duration-300 flex flex-col items-center text-center h-full">
+                    {logo ? (
+                      <img
+                        src={`${logo.imgix_url}?w=200&h=200&fit=max&auto=format,compress`}
+                        alt={item.metadata?.name || item.title}
+                        className="w-16 h-16 object-contain mb-4"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
+                        <span className="text-2xl text-gray-500 dark:text-gray-400">
+                          {(item.metadata?.name || item.title).charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      {item.metadata?.name || item.title}
+                    </h3>
+                    {item.metadata?.description && (
+                      <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                        {item.metadata.description}
+                      </p>
+                    )}
+                  </div>
+                );
+                
+                return websiteUrl ? (
+                  <a
+                    key={item.id}
+                    href={websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group"
+                  >
+                    {CardContent}
+                  </a>
+                ) : (
+                  <div key={item.id}>
+                    {CardContent}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Authors Section */}
       {authors.length > 0 && (
-        <section className="bg-gray-50 dark:bg-gray-900 py-16">
+        <section className="bg-white dark:bg-gray-950 py-16">
           <div className="container-wide">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 text-center">
               Meet Our Writers

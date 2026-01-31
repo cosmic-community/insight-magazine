@@ -1,5 +1,5 @@
 import { createBucketClient } from '@cosmicjs/sdk';
-import { BlogPost, Author, Category, AboutPage, hasStatus } from '@/types';
+import { BlogPost, Author, Category, AboutPage, PoweredBy, hasStatus } from '@/types';
 
 export const cosmic = createBucketClient({
   bucketSlug: process.env.COSMIC_BUCKET_SLUG as string,
@@ -191,5 +191,21 @@ export async function getAboutPage(): Promise<AboutPage | null> {
       return null;
     }
     throw new Error('Failed to fetch about page');
+  }
+}
+
+// Changed: Added function to fetch Powered By items
+export async function getPoweredByItems(): Promise<PoweredBy[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'powered-by' })
+      .props(['id', 'title', 'slug', 'metadata']);
+    
+    return response.objects as PoweredBy[];
+  } catch (error) {
+    if (hasStatus(error) && error.status === 404) {
+      return [];
+    }
+    throw new Error('Failed to fetch powered by items');
   }
 }
