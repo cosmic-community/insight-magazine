@@ -44,7 +44,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       <div className="mb-12">
         <Link
           href="/categories"
-          className="text-sm text-gray-500 hover:text-primary-600 transition-colors mb-4 inline-flex items-center gap-1"
+          className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors mb-4 inline-flex items-center gap-1"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -57,13 +57,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             className="w-4 h-4 rounded-full"
             style={{ backgroundColor: color }}
           />
-          <h1 className="text-4xl font-bold text-gray-900">
+          {/* Changed: Added dark:text-gray-100 for dark mode support */}
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
             {category.metadata?.name || category.title}
           </h1>
         </div>
         
+        {/* Changed: Added dark:text-gray-400 for dark mode support */}
         {category.metadata?.description && (
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 dark:text-gray-400">
             {category.metadata.description}
           </p>
         )}
@@ -78,12 +80,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         </div>
       ) : (
         <div className="text-center py-16">
-          <p className="text-gray-600 text-lg">
+          {/* Changed: Added dark:text-gray-400 for dark mode support */}
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
             No articles in this category yet.
           </p>
           <Link
             href="/"
-            className="mt-4 inline-block text-primary-600 hover:text-primary-700 font-medium"
+            className="mt-4 inline-block text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
           >
             View all articles
           </Link>
