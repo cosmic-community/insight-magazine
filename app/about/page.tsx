@@ -1,9 +1,26 @@
+import { Metadata } from 'next';
 import { getAboutPage, getAllAuthors } from '@/lib/cosmic';
 import Link from 'next/link';
 
-export const metadata = {
-  title: 'About | Insight Magazine',
-  description: 'Learn more about Insight Magazine and our mission to bring you inspiring ideas.',
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://insightmagazine.com';
+
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: 'Learn about Insight Magazine - our mission, our team, and our commitment to bringing you inspiring ideas on technology, business, and lifestyle.',
+  openGraph: {
+    title: 'About Us | Insight Magazine',
+    description: 'Learn about Insight Magazine - our mission, our team, and our commitment to bringing you inspiring ideas.',
+    url: `${siteUrl}/about`,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Us | Insight Magazine',
+    description: 'Learn about Insight Magazine - our mission, our team, and our commitment to bringing you inspiring ideas.',
+  },
+  alternates: {
+    canonical: `${siteUrl}/about`,
+  },
 };
 
 export default async function AboutPage() {
@@ -12,8 +29,26 @@ export default async function AboutPage() {
     getAllAuthors(),
   ]);
 
+  // JSON-LD for AboutPage
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About Insight Magazine',
+    description: aboutPage?.metadata?.headline || 'Learn more about Insight Magazine and our mission.',
+    url: `${siteUrl}/about`,
+    mainEntity: {
+      '@type': 'Organization',
+      name: 'Insight Magazine',
+      url: siteUrl,
+    },
+  };
+
   return (
     <div className="bg-white dark:bg-gray-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero Section */}
       <section className="relative">
         {aboutPage?.metadata?.featured_image ? (

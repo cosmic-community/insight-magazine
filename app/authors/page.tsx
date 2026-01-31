@@ -1,9 +1,26 @@
+import { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllAuthors, getAllPosts } from '@/lib/cosmic';
 
-export const metadata = {
-  title: 'Authors | Insight Magazine',
-  description: 'Meet our talented writers and contributors',
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://insightmagazine.com';
+
+export const metadata: Metadata = {
+  title: 'Our Authors',
+  description: 'Meet the talented writers and contributors behind Insight Magazine. Discover their expertise and read their latest articles on technology, business, and lifestyle.',
+  openGraph: {
+    title: 'Our Authors | Insight Magazine',
+    description: 'Meet the talented writers and contributors behind Insight Magazine.',
+    url: `${siteUrl}/authors`,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Our Authors | Insight Magazine',
+    description: 'Meet the talented writers and contributors behind Insight Magazine.',
+  },
+  alternates: {
+    canonical: `${siteUrl}/authors`,
+  },
 };
 
 export default async function AuthorsPage() {
@@ -21,8 +38,35 @@ export default async function AuthorsPage() {
     }
   });
 
+  // JSON-LD for authors listing
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Our Authors',
+    description: 'Meet the talented writers and contributors behind Insight Magazine.',
+    url: `${siteUrl}/authors`,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: authors.map((author, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Person',
+          name: author.metadata?.name || author.title,
+          url: `${siteUrl}/authors/${author.slug}`,
+          description: author.metadata?.bio || '',
+          image: author.metadata?.avatar?.imgix_url ? `${author.metadata.avatar.imgix_url}?w=400&h=400&fit=crop&auto=format` : undefined,
+        },
+      })),
+    },
+  };
+
   return (
     <div className="container-wide py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">Our Authors</h1>
       <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
         Meet the talented writers behind our articles

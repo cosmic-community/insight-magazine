@@ -1,8 +1,11 @@
 // app/categories/[slug]/page.tsx
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCategoryBySlug, getPostsByCategory, getAllCategories } from '@/lib/cosmic';
 import PostCard from '@/components/PostCard';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://insightmagazine.com';
 
 export async function generateStaticParams() {
   const categories = await getAllCategories();
@@ -11,17 +14,34 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);
   
   if (!category) {
     return { title: 'Category Not Found' };
   }
+
+  const categoryName = category.metadata?.name || category.title;
+  const description = category.metadata?.description || `Browse all ${categoryName} articles on Insight Magazine.`;
   
   return {
-    title: `${category.metadata?.name || category.title} | Insight Magazine`,
-    description: category.metadata?.description || `Browse ${category.title} articles`,
+    title: categoryName,
+    description: description,
+    openGraph: {
+      title: `${categoryName} | Insight Magazine`,
+      description: description,
+      url: `${siteUrl}/categories/${slug}`,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${categoryName} | Insight Magazine`,
+      description: description,
+    },
+    alternates: {
+      canonical: `${siteUrl}/categories/${slug}`,
+    },
   };
 }
 
@@ -37,9 +57,36 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   }
 
   const color = category.metadata?.color || '#6B7280';
+  const categoryName = category.metadata?.name || category.title;
+
+  // JSON-LD for category page
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: categoryName,
+    description: category.metadata?.description || `Browse ${categoryName} articles`,
+    url: `${siteUrl}/categories/${slug}`,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: posts.map((post, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Article',
+          headline: post.title,
+          url: `${siteUrl}/posts/${post.slug}`,
+          description: post.metadata?.excerpt || '',
+        },
+      })),
+    },
+  };
 
   return (
     <div className="container-wide py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Header */}
       <div className="mb-12">
         <Link
@@ -57,13 +104,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             className="w-4 h-4 rounded-full"
             style={{ backgroundColor: color }}
           />
-          {/* Changed: Added dark:text-gray-100 for dark mode support */}
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-            {category.metadata?.name || category.title}
+            {categoryName}
           </h1>
         </div>
         
-        {/* Changed: Added dark:text-gray-400 for dark mode support */}
         {category.metadata?.description && (
           <p className="text-xl text-gray-600 dark:text-gray-400">
             {category.metadata.description}
@@ -80,7 +125,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         </div>
       ) : (
         <div className="text-center py-16">
-          {/* Changed: Added dark:text-gray-400 for dark mode support */}
           <p className="text-gray-600 dark:text-gray-400 text-lg">
             No articles in this category yet.
           </p>

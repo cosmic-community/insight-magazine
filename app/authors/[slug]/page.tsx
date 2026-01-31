@@ -1,8 +1,11 @@
 // app/authors/[slug]/page.tsx
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getAuthorBySlug, getPostsByAuthor, getAllAuthors } from '@/lib/cosmic';
 import PostCard from '@/components/PostCard';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://insightmagazine.com';
 
 export async function generateStaticParams() {
   const authors = await getAllAuthors();
@@ -11,17 +14,39 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const author = await getAuthorBySlug(slug);
   
   if (!author) {
     return { title: 'Author Not Found' };
   }
+
+  const authorName = author.metadata?.name || author.title;
+  const description = author.metadata?.bio || `Read all articles by ${authorName} on Insight Magazine.`;
+  const avatarUrl = author.metadata?.avatar?.imgix_url 
+    ? `${author.metadata.avatar.imgix_url}?w=400&h=400&fit=crop&auto=format`
+    : undefined;
   
   return {
-    title: `${author.metadata?.name || author.title} | Insight Magazine`,
-    description: author.metadata?.bio || `Articles by ${author.title}`,
+    title: authorName,
+    description: description,
+    openGraph: {
+      title: `${authorName} | Insight Magazine`,
+      description: description,
+      url: `${siteUrl}/authors/${slug}`,
+      type: 'profile',
+      images: avatarUrl ? [{ url: avatarUrl, width: 400, height: 400, alt: authorName }] : undefined,
+    },
+    twitter: {
+      card: 'summary',
+      title: `${authorName} | Insight Magazine`,
+      description: description,
+      images: avatarUrl ? [avatarUrl] : undefined,
+    },
+    alternates: {
+      canonical: `${siteUrl}/authors/${slug}`,
+    },
   };
 }
 
@@ -38,9 +63,33 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
 
   const avatar = author.metadata?.avatar;
   const twitter = author.metadata?.twitter;
+  const authorName = author.metadata?.name || author.title;
+
+  // JSON-LD for Person
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      name: authorName,
+      url: `${siteUrl}/authors/${slug}`,
+      description: author.metadata?.bio || '',
+      image: avatar?.imgix_url ? `${avatar.imgix_url}?w=400&h=400&fit=crop&auto=format` : undefined,
+      sameAs: twitter ? [`https://twitter.com/${twitter.replace('@', '')}`] : undefined,
+      worksFor: {
+        '@type': 'Organization',
+        name: 'Insight Magazine',
+        url: siteUrl,
+      },
+    },
+  };
 
   return (
     <div className="container-wide py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Author Header */}
       <div className="mb-12">
         <Link
@@ -57,20 +106,20 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
           {avatar ? (
             <img
               src={`${avatar.imgix_url}?w=300&h=300&fit=crop&auto=format,compress`}
-              alt={author.metadata?.name || author.title}
+              alt={authorName}
               className="w-40 h-40 rounded-full object-cover shadow-lg"
             />
           ) : (
             <div className="w-40 h-40 rounded-full bg-gray-200 flex items-center justify-center shadow-lg">
               <span className="text-5xl text-gray-500">
-                {(author.metadata?.name || author.title).charAt(0)}
+                {authorName.charAt(0)}
               </span>
             </div>
           )}
           
           <div className="flex-1">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              {author.metadata?.name || author.title}
+              {authorName}
             </h1>
             
             {author.metadata?.bio && (
@@ -113,7 +162,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
       {/* Author's Posts */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-8">
-          Articles by {author.metadata?.name || author.title}
+          Articles by {authorName}
           <span className="ml-2 text-gray-500 font-normal">({posts.length})</span>
         </h2>
         

@@ -1,9 +1,26 @@
+import { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllCategories, getAllPosts } from '@/lib/cosmic';
 
-export const metadata = {
-  title: 'Categories | Insight Magazine',
-  description: 'Browse all article categories on Insight Magazine',
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://insightmagazine.com';
+
+export const metadata: Metadata = {
+  title: 'Categories',
+  description: 'Browse all article categories on Insight Magazine. Find content on technology, business, lifestyle, and more topics that interest you.',
+  openGraph: {
+    title: 'Categories | Insight Magazine',
+    description: 'Browse all article categories on Insight Magazine. Find content on technology, business, lifestyle, and more.',
+    url: `${siteUrl}/categories`,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Categories | Insight Magazine',
+    description: 'Browse all article categories on Insight Magazine.',
+  },
+  alternates: {
+    canonical: `${siteUrl}/categories`,
+  },
 };
 
 export default async function CategoriesPage() {
@@ -23,8 +40,34 @@ export default async function CategoriesPage() {
     }
   });
 
+  // JSON-LD for categories listing
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Categories',
+    description: 'Browse all article categories on Insight Magazine.',
+    url: `${siteUrl}/categories`,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: categories.map((category, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Thing',
+          name: category.metadata?.name || category.title,
+          url: `${siteUrl}/categories/${category.slug}`,
+          description: category.metadata?.description || '',
+        },
+      })),
+    },
+  };
+
   return (
     <div className="container-wide py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">Categories</h1>
       <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
         Browse articles by topic

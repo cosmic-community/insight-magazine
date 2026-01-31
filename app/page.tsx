@@ -1,7 +1,29 @@
+import { Metadata } from 'next';
 import { getAllPosts, getFeaturedPosts, getAllCategories } from '@/lib/cosmic';
 import HeroSection from '@/components/HeroSection';
 import PostCard from '@/components/PostCard';
 import CategoryFilter from '@/components/CategoryFilter';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://insightmagazine.com';
+
+export const metadata: Metadata = {
+  title: 'Insight Magazine | Ideas that inspire',
+  description: 'Discover the latest articles on technology, business, and lifestyle. Read thought-provoking content that informs, educates, and inspires your next big idea.',
+  openGraph: {
+    title: 'Insight Magazine | Ideas that inspire',
+    description: 'Discover the latest articles on technology, business, and lifestyle. Read thought-provoking content that informs, educates, and inspires.',
+    url: siteUrl,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Insight Magazine | Ideas that inspire',
+    description: 'Discover the latest articles on technology, business, and lifestyle.',
+  },
+  alternates: {
+    canonical: siteUrl,
+  },
+};
 
 export default async function HomePage() {
   const [posts, featuredPosts, categories] = await Promise.all([
@@ -13,8 +35,28 @@ export default async function HomePage() {
   const heroPost = featuredPosts[0] || posts[0];
   const regularPosts = posts.filter(post => post.id !== heroPost?.id);
 
+  // Generate JSON-LD for the homepage
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Insight Magazine',
+    url: siteUrl,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${siteUrl}/search?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <div className="bg-white dark:bg-gray-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {heroPost && <HeroSection post={heroPost} />}
       
       <section className="container-wide py-16">
