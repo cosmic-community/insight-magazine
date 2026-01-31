@@ -31,6 +31,11 @@
   .container-wide {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+
+  /* Changed: Category badge dark mode fix - increase background opacity for visibility */
+  .dark .category-badge {
+    background-color: color-mix(in srgb, var(--category-color) 35%, transparent) !important;
+  }
 }
 
 @layer utilities {
