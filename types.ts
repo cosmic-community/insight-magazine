@@ -51,6 +51,20 @@ export interface BlogPost extends CosmicObject {
   };
 }
 
+// Changed: Added AboutPage interface for the About page content
+export interface AboutPage extends CosmicObject {
+  type: 'about-pages';
+  metadata: {
+    headline: string;
+    content: string;
+    featured_image?: FeaturedImage;
+    mission_title?: string;
+    mission_content?: string;
+    team_title?: string;
+    team_content?: string;
+  };
+}
+
 // Simple error helper for Cosmic SDK
 export function hasStatus(error: unknown): error is { status: number } {
   return typeof error === 'object' && error !== null && 'status' in error;

@@ -1,5 +1,5 @@
 import { createBucketClient } from '@cosmicjs/sdk';
-import { BlogPost, Author, Category, hasStatus } from '@/types';
+import { BlogPost, Author, Category, AboutPage, hasStatus } from '@/types';
 
 export const cosmic = createBucketClient({
   bucketSlug: process.env.COSMIC_BUCKET_SLUG as string,
@@ -174,5 +174,22 @@ export async function getRelatedPosts(currentPostId: string, categorySlug?: stri
     return relatedPosts.slice(0, 3);
   } catch (error) {
     return [];
+  }
+}
+
+// Changed: Added function to fetch About page content
+export async function getAboutPage(): Promise<AboutPage | null> {
+  try {
+    const response = await cosmic.objects
+      .findOne({ type: 'about-pages', slug: 'about' })
+      .props(['id', 'title', 'slug', 'metadata', 'created_at'])
+      .depth(1);
+    
+    return response.object as AboutPage;
+  } catch (error) {
+    if (hasStatus(error) && error.status === 404) {
+      return null;
+    }
+    throw new Error('Failed to fetch about page');
   }
 }

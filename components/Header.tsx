@@ -21,6 +21,13 @@ export default function Header() {
             >
               Home
             </Link>
+            {/* Changed: Added About link */}
+            <Link
+              href="/about"
+              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+            >
+              About
+            </Link>
             <Link
               href="/categories"
               className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
