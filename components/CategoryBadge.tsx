@@ -18,7 +18,7 @@ export default function CategoryBadge({ category, size = 'md' }: CategoryBadgePr
       href={`/categories/${category.slug}`}
       className={`inline-flex items-center gap-1.5 rounded-full font-medium transition-all hover:opacity-80 ${sizeClasses}`}
       style={{
-        backgroundColor: `${color}15`,
+        backgroundColor: `${color}20`,
         color: color,
       }}
     >

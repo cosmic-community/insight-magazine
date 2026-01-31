@@ -15,7 +15,7 @@ export default function CategoryFilter({ categories }: CategoryFilterProps) {
           <Link
             key={category.id}
             href={`/categories/${category.slug}`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 text-sm font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
           >
             <span
               className="w-2 h-2 rounded-full"

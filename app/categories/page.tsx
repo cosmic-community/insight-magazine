@@ -25,8 +25,8 @@ export default async function CategoriesPage() {
 
   return (
     <div className="container-wide py-16">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">Categories</h1>
-      <p className="text-xl text-gray-600 mb-12">
+      <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">Categories</h1>
+      <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
         Browse articles by topic
       </p>
       
@@ -39,22 +39,22 @@ export default async function CategoriesPage() {
             <Link
               key={category.id}
               href={`/categories/${category.slug}`}
-              className="group relative overflow-hidden rounded-xl bg-white border border-gray-200 p-6 hover:shadow-lg transition-all duration-300"
+              className="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg dark:hover:shadow-gray-900/50 transition-all duration-300"
             >
               <div
                 className="absolute top-0 left-0 w-2 h-full"
                 style={{ backgroundColor: color }}
               />
               <div className="pl-4">
-                <h2 className="text-xl font-semibold text-gray-900 group-hover:text-primary-600 transition-colors mb-2">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors mb-2">
                   {category.metadata?.name || category.title}
                 </h2>
                 {category.metadata?.description && (
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
                     {category.metadata.description}
                   </p>
                 )}
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {count} {count === 1 ? 'article' : 'articles'}
                 </p>
               </div>
