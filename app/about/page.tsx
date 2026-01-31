@@ -89,7 +89,7 @@ export default async function AboutPage() {
               {aboutPage.metadata.team_content && (
                 <div 
                   className="prose prose-lg dark:prose-invert prose-primary max-w-none"
-                  dangerouslySetInnerHTML={{ __html: aboutPage.metadata.mission_content }}
+                  dangerouslySetInnerHTML={{ __html: aboutPage.metadata.team_content }}
                 />
               )}
             </div>
