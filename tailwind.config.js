@@ -4,6 +4,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -53,6 +54,33 @@ module.exports = {
             blockquote: {
               borderLeftColor: '#0ea5e9',
               fontStyle: 'italic',
+            },
+          },
+        },
+        invert: {
+          css: {
+            color: '#d1d5db',
+            h1: {
+              color: '#f9fafb',
+            },
+            h2: {
+              color: '#f9fafb',
+            },
+            h3: {
+              color: '#f9fafb',
+            },
+            strong: {
+              color: '#f9fafb',
+            },
+            a: {
+              color: '#38bdf8',
+              '&:hover': {
+                color: '#7dd3fc',
+              },
+            },
+            blockquote: {
+              borderLeftColor: '#38bdf8',
+              color: '#9ca3af',
             },
           },
         },

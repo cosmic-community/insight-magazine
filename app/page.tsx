@@ -14,12 +14,12 @@ export default async function HomePage() {
   const regularPosts = posts.filter(post => post.id !== heroPost?.id);
 
   return (
-    <div>
+    <div className="bg-white dark:bg-gray-950">
       {heroPost && <HeroSection post={heroPost} />}
       
       <section className="container-wide py-16">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4 md:mb-0">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 md:mb-0">
             Latest Articles
           </h2>
           <CategoryFilter categories={categories} />
@@ -32,7 +32,7 @@ export default async function HomePage() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-600 text-center py-12">
+          <p className="text-gray-600 dark:text-gray-400 text-center py-12">
             No articles found. Check back soon!
           </p>
         )}
