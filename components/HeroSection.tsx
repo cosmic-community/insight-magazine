@@ -34,11 +34,11 @@ export default function HeroSection({ post }: HeroSectionProps) {
       <div className="absolute inset-0 flex items-end">
         <div className="container-wide pb-16 md:pb-24">
           <div className="max-w-3xl">
-            {/* Categories */}
+            {/* Categories - Changed: Added variant="hero" for solid background */}
             {categories && categories.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {categories.map((category) => (
-                  <CategoryBadge key={category.id} category={category} />
+                  <CategoryBadge key={category.id} category={category} variant="hero" />
                 ))}
               </div>
             )}
