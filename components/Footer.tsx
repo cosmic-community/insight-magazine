@@ -1,10 +1,11 @@
 import Link from 'next/link';
+import ThemeToggle from './ThemeToggle';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-gray-900 dark:bg-gray-950 text-white border-t border-gray-800 dark:border-gray-800">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-white border-t border-gray-800 dark:border-gray-900">
       <div className="container-wide py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -62,9 +63,15 @@ export default function Footer() {
           </div>
         </div>
         
-        {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-gray-800 dark:border-gray-800 text-center text-gray-500 dark:text-gray-600 text-sm">
-          © {currentYear} Insight Magazine. All rights reserved.
+        {/* Bottom section with theme toggle and copyright */}
+        <div className="mt-12 pt-8 border-t border-gray-800 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-gray-500 dark:text-gray-600 text-sm">
+            © {currentYear} Insight Magazine. All rights reserved.
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-gray-500 dark:text-gray-600 text-sm">Theme:</span>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </footer>
